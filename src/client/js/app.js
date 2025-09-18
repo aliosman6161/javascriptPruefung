@@ -215,8 +215,9 @@
     try{
       const meta = await fetchMeta(docId);
       const inner = getInnerResult(meta?.classification);
-      const scores = collectScores(inner);
-      const aggMin = minScore(scores);
+      const scoreList = collectScores(inner);
+      const aggMin = minScore(scoreList);
+
       const scoreBadge = (aggMin == null)
         ? `<span class="badge muted">keine Klassifizierung</span>`
         : `<span class="badge ${aggMin >= 0.7 ? 'good' : 'warn'}">min-confidence: ${aggMin.toFixed(2)}</span>`;
@@ -230,6 +231,17 @@
         doc_date_parsed: meta.corrections?.doc_date_parsed ?? inner?.doc_date_parsed ?? "",
         doc_subject: meta.corrections?.doc_subject ?? inner?.doc_subject?.value ?? "",
       };
+      
+      // KI-Scores + optionale Overrides aus corrections
+      const fieldScores = {
+        doc_id: typeof inner?.doc_id?.score === "number" ? inner.doc_id.score : null,
+        doc_date_sic: typeof inner?.doc_date_sic?.score === "number" ? inner.doc_date_sic.score : null,
+        doc_subject: typeof inner?.doc_subject?.score === "number" ? inner.doc_subject.score : null,
+      };
+
+      const overrides = meta.corrections?.conf_overrides || {};
+
+
       const raw = {
         kind: inner?.kind ?? "",
         doc_id: inner?.doc_id?.value ?? "",
@@ -239,7 +251,7 @@
       };
 
       const canEdit = meta.state !== "processed"; // Review: edit erlaubt; Processed: read-only
-      const canClassifySingle = meta.state === "inbox";
+      const canClassifySingle = meta.state === "inbox" || meta.state === "review" || meta.state === "hold";
       const canAutoRouteSingle = meta.state === "inbox" && Boolean(inner);
 
       const renderView = () => {
@@ -259,12 +271,13 @@
           `;
         } else if (meta.state === "review") {
           rightButtons = `
-            <button id="btn-to-hold" class="icon-btn small">→ Hold</button>
+            ${classifyBtn}
             <button id="btn-to-processed" class="icon-btn small primary">→ Processed</button>
             ${editBtn}
           `;
         } else if (meta.state === "hold") {
           rightButtons = `
+            ${classifyBtn}
             <button id="btn-back-inbox" class="icon-btn small">← Zurück in Review</button>
           `;
         } else {
@@ -302,6 +315,19 @@
               ${renderInlineValueRow("date (sic)", eff.doc_date_sic, raw.doc_date_sic)}
               ${renderInlineValueRow("date (parsed)", eff.doc_date_parsed, raw.doc_date_parsed)}
               ${renderInlineValueRow("subject", eff.doc_subject, raw.doc_subject)}
+
+
+
+              <div class="section-title-row" style="margin-top:10px;">
+                <h3 class="section-title">Confidence (KI)</h3>
+              </div>
+              <div class="kv"><span>doc_id.score</span><span>${formatScore(overrides.doc_id_score, fieldScores.doc_id)}</span></div>
+              <div class="kv"><span>doc_date_sic.score</span><span>${formatScore(overrides.doc_date_sic_score, fieldScores.doc_date_sic)}</span></div>
+              <div class="kv"><span>doc_subject.score</span><span>${formatScore(overrides.doc_subject_score, fieldScores.doc_subject)}</span></div>
+
+
+
+
             </div>
           </div>
         `;
@@ -439,6 +465,18 @@
                 ${renderInput("doc_date_sic", "date (sic)", eff.doc_date_sic, "YYYY-MM-DD")}
                 ${renderInput("doc_date_parsed", "date (parsed)", eff.doc_date_parsed, "YYYY-MM-DDTHH:mm:ssZ")}
                 ${renderInput("doc_subject", "subject", eff.doc_subject)}
+
+
+                <div class="subsection" style="margin-top:16px;">
+                  <h3 class="section-title">Confidence Overrides (0–1)</h3>
+                  ${renderNumber("conf_doc_id", "doc_id.score", overrides?.doc_id_score)}
+                  ${renderNumber("conf_date_sic", "doc_date_sic.score", overrides?.doc_date_sic_score)}
+                  ${renderNumber("conf_subject", "doc_subject.score", overrides?.doc_subject_score)}
+                  <p class="hint muted">Leer lassen, um keinen Override zu setzen.</p>
+                </div>
+
+
+
               </div>
 
               <div class="kv" style="margin-top:10px;"><span>docId</span><code>${meta.docId}</code></div>
@@ -457,13 +495,39 @@
             doc_subject: val("#f-doc_subject", detail),
           };
 
-          const patch = {};
-          const currentEff = { ...eff };
-          for (const [k, v] of Object.entries(next)) {
-            if (String(v).trim() !== String(currentEff[k]).trim()) {
-              patch[k] = String(v).trim();
+          
+          
+
+            const patch = {};
+            const currentEff = eff; // aktueller effektiver Stand zum Vergleichen
+            for (const [k, v] of Object.entries(next)) {
+              if (String(v).trim() !== String((currentEff[k] ?? "")).trim()) {
+                patch[k] = String(v).trim();
+              }
             }
-          }
+
+            // Confidence-Overrides einsammeln (leer => kein Override)
+            const getNum = (sel) => {
+              const s = val(sel, detail);
+              if (s === "") return null;
+              const n = Number(s);
+              if (!isFinite(n)) return null;
+              return Math.max(0, Math.min(1, n));
+            };
+            const conf = {
+              doc_id_score: getNum("#f-conf_doc_id"),
+              doc_date_sic_score: getNum("#f-conf_date_sic"),
+              doc_subject_score: getNum("#f-conf_subject"),
+            };
+            // nur anhängen, wenn eines gesetzt/geleert wurde
+            if (conf.doc_id_score !== null || conf.doc_date_sic_score !== null || conf.doc_subject_score !== null) {
+              patch.conf_overrides = conf;
+            }
+
+
+
+
+
           if (Object.keys(patch).length === 0) {
             return renderDetail(state, docId);
           }
@@ -521,6 +585,18 @@
     return `<div class="kv"><span>${label}</span><span>${valueHtml}</span></div>`;
   }
 
+
+    function formatScore(overrideVal, baseVal){
+      const show = (x) => (typeof x === "number" && isFinite(x)) ? x.toFixed(2) : "—";
+      if (typeof overrideVal === "number" && isFinite(overrideVal)) {
+        return `${show(overrideVal)} <span class="badge warn">(override)</span>`;
+      }
+      return show(baseVal);
+    }
+
+
+
+
   function renderInput(key, label, value, placeholder=""){
     const id = `f-${key}`;
     const safe = escapeHtml(value ?? "");
@@ -532,6 +608,19 @@
       </div>
     `;
   }
+
+
+
+  function renderNumber(key, label, value){
+    const id = `f-${key}`;
+    const v = (value ?? "") === "" ? "" : String(value ?? "");
+    return `<div class="field">
+      <label for="${id}">${label}</label>
+      <input id="${id}" type="number" min="0" max="1" step="0.01" value="${escapeHtml(v)}" />
+    </div>`;
+  }
+
+
 
   // --- selection + controlled loading ---
   function selectItem(state, docId){
