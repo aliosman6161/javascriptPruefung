@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Intelligenter Posteingang</title>
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <h1>Intelligenter Posteingang</h1>
+    <p class="subtitle">Scanner → Inbox → Review/Processed</p>
+    <div id="userbox" style="margin-left:auto; display:flex; align-items:center; gap:10px;">
+      <span id="current-user" title="aktueller Benutzer"></span>
+      <button id="logout-btn" class="icon-btn">Abmelden</button>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="Ordner">
+    <button class="tab" id="tab-inbox" role="tab" aria-selected="true" aria-controls="panel-inbox">Inbox</button>
+    <button class="tab" id="tab-review" role="tab" aria-selected="false" aria-controls="panel-review">Review</button>
+    <button class="tab" id="tab-processed" role="tab" aria-selected="false" aria-controls="panel-processed">Processed</button>
+  </nav>
+
+  <main class="panels">
+    <!-- INBOX -->
+    <section id="panel-inbox" role="tabpanel">
+      <div class="split">
+        <aside class="sidebar">
+          <div class="toolbar">
+            <button id="refresh-inbox" class="icon-btn">Aktualisieren</button>
+            <button id="bulk-classify" class="icon-btn">Klassifizieren (alle)</button>
+            <button id="bulk-autoroute" class="icon-btn">Routen (alle)</button>
+            <button id="upload-inbox" class="icon-btn">Hochladen</button>
+            <input id="filepicker-inbox" type="file" accept="application/pdf" multiple hidden />
+          </div>
+          <div class="toolbar">
+            <input id="search-inbox" class="search" placeholder="Suchen…" />
+          </div>
+          <div id="inbox-list" class="list"></div>
+          <div id="inbox-empty" class="empty" hidden>Keine Dokumente.</div>
+        </aside>
+        <section class="detail" id="inbox-detail">
+          <div class="placeholder"><h2>Inbox</h2><p>Wähle links ein Dokument.</p></div>
+        </section>
+      </div>
+    </section>
+
+    <!-- REVIEW -->
+    <section id="panel-review" role="tabpanel" hidden>
+      <div class="split">
+        <aside class="sidebar">
+          <div class="toolbar">
+            <button id="refresh-review" class="icon-btn">Aktualisieren</button>
+          </div>
+          <div class="toolbar">
+            <input id="search-review" class="search" placeholder="Suchen…" />
+          </div>
+          <div id="review-list" class="list"></div>
+          <div id="review-empty" class="empty" hidden>Keine Dokumente.</div>
+        </aside>
+        <section class="detail" id="review-detail">
+          <div class="placeholder"><h2>Review</h2><p>Wähle links ein Dokument.</p></div>
+        </section>
+      </div>
+    </section>
+
+    <!-- PROCESSED -->
+    <section id="panel-processed" role="tabpanel" hidden>
+      <div class="split">
+        <aside class="sidebar">
+          <div class="toolbar">
+            <button id="refresh-processed" class="icon-btn">Aktualisieren</button>
+          </div>
+          <div class="toolbar">
+            <input id="search-processed" class="search" placeholder="Suchen…" />
+          </div>
+          <div id="processed-list" class="list"></div>
+          <div id="processed-empty" class="empty" hidden>Keine Dokumente.</div>
+        </aside>
+        <section class="detail" id="processed-detail">
+          <div class="placeholder"><h2>Processed</h2><p>Wähle links ein Dokument.</p></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="./js/app.js" type="module"></script>
+</body>
+</html>

@@ -4,21 +4,6 @@
 (function () {
   const API_BASE = "http://localhost:3001";
 
-
-
-
-  // --- Globaler Fetch-Wrapper: hängt X-User an ---
-  const __origFetch = window.fetch;
-  window.fetch = (input, init = {}) => {
-    const headers = new Headers(init?.headers || {});
-    const u = localStorage.getItem("ip_user") || "anonymous";
-    headers.set("X-User", u);
-    return __origFetch(input, { ...init, headers });
-  };
-
-
-
-
   // --- Simple "Login required" ---
   const CURRENT_USER = localStorage.getItem("ip_user");
   if (!CURRENT_USER) {

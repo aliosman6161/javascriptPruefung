@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login – Intelligenter Posteingang</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin:0; min-height:100vh; display:grid; place-items:center; background:#f6f7f9; }
+    .card { background:#fff; padding:24px; border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,.08); width:min(420px, 92vw); }
+    h1 { margin:0 0 16px; font-size:20px; }
+    .row { margin:12px 0; display:flex; flex-direction:column; gap:6px; }
+    label { font-size:12px; color:#555; }
+    input[type="text"], input[type="password"] { padding:10px 12px; border:1px solid #dcdfe5; border-radius:8px; font-size:14px; }
+    .actions { display:flex; gap:8px; margin-top:12px; }
+    button { padding:10px 14px; border:0; border-radius:8px; cursor:pointer; }
+    .primary { background:#1e66f5; color:#fff; }
+    .ghost { background:#eef2ff; color:#1e66f5; }
+    .error { color:#b00020; min-height:18px; margin-top:8px; font-size:13px; }
+    .hint { margin-top:10px; color:#666; font-size:12px; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>Login</h1>
+    <form id="login-form" autocomplete="off">
+      <div class="row">
+        <label for="username">Benutzer</label>
+        <input id="username" name="username" type="text" placeholder="z. B. admin" required />
+      </div>
+      <div class="row">
+        <label for="password">Passwort</label>
+        <input id="password" name="password" type="password" placeholder="••••••••" required />
+      </div>
+      <div class="actions">
+        <button type="submit" class="primary">Anmelden</button>
+        <!-- Registrieren ist nur Platzhalter (später implementieren) -->
+        <button type="button" id="btn-register" class="ghost" disabled>Registrieren (später)</button>
+      </div>
+      <div id="login-error" class="error"></div>
+      <p class="hint">Test-User: <b>admin</b> / <b>admin</b></p>
+    </form>
+  </main>
+
+  <script type="module" src="./js/login.js"></script>
+</body>
+</html>

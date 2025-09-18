@@ -1,0 +1,302 @@
+/* ===== Minimal Dark (Lavender Accent) + 20/50/30 Split + 100vh ===== */
+:root{
+  /* Palette */
+  --bg: #0b0f16;
+  --surface: #101624;
+  --panel: #121a2b;
+  --elev: #0f1524;
+
+  --text: #e8ecf6;
+  --muted: #9aa6bf;
+
+  --accent: #b19cff; /* lavender */
+  --accent-soft: rgba(177,156,255,.14);
+
+  --good-bg:#0f2520;   --good-border:#1e6c57;
+  --warn-bg:#2a1a16;   --warn-border:#b05a3a;
+
+  --card: #0f182b;
+  --card-hover: #132038;
+  --selected: #192a4d;
+
+  --border: rgba(255,255,255,0.07);
+  --divider: rgba(255,255,255,0.08);
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.25);
+  --shadow-md: 0 6px 20px rgba(0,0,0,.35);
+
+  --radius: 12px;
+}
+
+*{ box-sizing:border-box }
+html,body{ height:100% }
+html{ scroll-behavior:smooth }
+body{
+  margin:0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial;
+  color:var(--text);
+  background: radial-gradient(1200px 800px at 20% -20%, #121a2a 0%, var(--bg) 55%);
+}
+
+/* Containers */
+.app-header,.app-footer,.panels,.tabs{
+  width: min(95vw);
+  margin: 0 auto;
+  padding: 0 12px;
+}
+
+/* Header */
+.app-header{ padding:24px 12px 8px }
+.app-header h1{ margin:0 0 4px; font-size:22px; letter-spacing:.2px; font-weight:600 }
+.subtitle{ margin:0; color:var(--muted); font-size:13px }
+
+/* Tabs – Underline-Stil */
+.tabs{
+  display:flex; gap:8px; padding:10px 12px 12px; border-bottom: 1px solid var(--divider);
+}
+.tab{
+  appearance:none; border:none; background:transparent; color:var(--text);
+  padding:8px 10px; border-radius:10px; cursor:pointer; font-size:14px;
+  position:relative;
+}
+.tab[aria-selected="true"]{ color: var(--accent) }
+.tab[aria-selected="true"]::after{
+  content:""; position:absolute; left:8px; right:8px; bottom:-12px; height:2px;
+  background: var(--accent); border-radius:999px;
+}
+
+/* ===== Hauptbereich ===== */
+.panels{
+  padding:10px 12px 16px;
+  /* Der Nutzer wünscht 100vh Höhe für den Arbeitsbereich */
+}
+[role="tabpanel"]{
+  background: var(--panel);
+  border:1px solid var(--border);
+  border-radius: var(--radius);
+  height: 100vh;             /* << gefordert */
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Split: 20% | 80% (rechts enthält 50%/30%) */
+.split{
+  display:grid;
+  grid-template-columns: 20% 80%;
+  gap:0;
+  height: 100%;              /* füllt 100vh vom Panel */
+}
+@media (max-width: 1100px){
+  .split{ grid-template-columns: 1fr; height:auto }
+}
+
+/* Sidebar (Kacheln) */
+.sidebar{
+  border-right: 1px solid var(--divider);
+  padding:12px;
+  display:flex; flex-direction:column;
+  min-height:0;
+  overflow:auto;             /* eigene Scrollbar */
+  background: linear-gradient(180deg, rgba(177,156,255,.05), transparent 180px), transparent;
+}
+
+/* Detail rechts (enthält Viewer + Info) */
+.detail{
+  padding:14px;
+  min-height:0;
+  overflow:hidden;           /* innen steuern wir Scrollen je Box */
+  display: block;
+}
+
+/* Rechtses Grid: 50% | 30% vom Gesamt ⇒ 62.5% | 37.5% vom rechten 80%-Bereich */
+.detail-grid{
+  display:grid;
+  grid-template-columns: 62.5% 37.5%;
+  gap:16px;
+  height: 100%;
+}
+@media (max-width: 1100px){
+  .detail-grid{ grid-template-columns: 1fr; height:auto }
+}
+
+.placeholder h2{ margin:0 0 6px; font-size:18px; font-weight:600 }
+.placeholder p{ margin:0; color:var(--muted) }
+
+/* Toolbar */
+.toolbar{
+  display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap;
+}
+.icon-btn{
+  border:1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius:10px;
+  padding:8px 10px; cursor:pointer;
+  transition: background .15s ease, transform .02s ease, border-color .15s ease, box-shadow .15s;
+  box-shadow: var(--shadow-sm);
+}
+.icon-btn:hover{ background:#151e32 }
+.icon-btn:active{ transform: translateY(1px) }
+.icon-btn.small{ padding:6px 8px; font-size:12px }
+.icon-btn.ghost{ background:transparent; box-shadow:none }
+.icon-btn.primary{ border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft) }
+.icon-btn:disabled{ opacity:.6; cursor:not-allowed }
+
+.search{
+  flex:1; min-width:180px;
+  padding:10px 12px; border-radius:10px; border:1px solid var(--border);
+  background:#0f1422; color:var(--text); outline:none;
+}
+.search:focus{ border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft) }
+
+/* Liste */
+.list{
+  display:flex; flex-direction:column; gap:8px;
+  flex:1; overflow:auto; min-height:0;
+  padding-right:2px;
+}
+.item{
+  background: var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px;
+  cursor:pointer;
+  transition: background .15s ease, border-color .15s ease, transform .04s ease, box-shadow .15s;
+}
+.item:hover{ background: var(--card-hover); box-shadow: var(--shadow-sm) }
+.item.selected{
+  background: var(--selected);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft) inset;
+}
+.item .title{
+  font-size:14px; margin:0 0 4px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:600;
+}
+.item .meta{
+  font-size:12px; color:var(--muted);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+
+.empty{ color:var(--muted); padding:12px 4px }
+
+/* PDF Viewer (50% gesamt) */
+.viewer{
+  background:#0c1322; border:1px solid var(--border);
+  border-radius:12px; overflow:hidden;
+  height: 100%;            /* füllt gesamte Spaltenhöhe */
+  min-height: 320px;
+  box-shadow: var(--shadow-md);
+}
+.pdf-box{ width:100%; height:100%; display:block }
+.pdf-fallback{ padding:18px }
+.pdf-fallback a{ color: var(--accent); text-decoration:none }
+.pdf-fallback a:hover{ text-decoration:underline }
+
+/* Info/Bearbeiten (30% gesamt) */
+.info{
+  background: var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px; padding:14px;
+  box-shadow: var(--shadow-sm);
+  height: 100%;            /* füllt rechte Spalte komplett */
+  overflow: auto;          /* eigene Scrollbar */
+}
+
+/* Section header */
+.section-title{ margin:6px 0 8px; font-size:13px; letter-spacing:.3px; color:#cfd6ea; text-transform:uppercase }
+.section-title-row{ display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap: wrap; }
+.section-actions{ display:flex; gap:8px; flex-wrap: wrap; }
+
+/* Key/Value Rows */
+.kv{
+  display:grid; grid-template-columns: 140px 1fr;
+  gap:12px; align-items:baseline; padding:8px 0;
+  border-top:1px solid var(--divider);
+}
+.kv:first-of-type{ border-top:none; padding-top:0 }
+.kv code{
+  background:#0d1426; border:1px solid var(--border);
+  padding:2px 6px; border-radius:8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+.kv > span:first-child{ color: var(--muted) }
+
+/* Badges */
+.badge{
+  display:inline-block; margin-left:8px; padding:2px 8px;
+  border-radius:999px; font-size:12px; border:1px solid var(--border)
+}
+.badge.good{ border-color:var(--good-border); background:var(--good-bg) }
+.badge.warn{ border-color:var(--warn-border); background:var(--warn-bg) }
+.badge.muted{ opacity:.7 }
+.muted{ color: var(--muted) }
+
+/* Inline-Diff */
+.old{ opacity:.7 }
+.old.strike{ text-decoration: line-through; text-decoration-thickness: 2px; text-decoration-color: #7a859b }
+.sep{ opacity:.6; margin: 0 6px }
+.new{ font-weight:600 }
+
+/* Inline-Edit */
+.inline-form{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+.inline-form .row{ display:flex; flex-direction:column; gap:4px; }
+.inline-form label{ font-size:12px; color:var(--muted) }
+.inline-form input{
+  width:100%; padding:10px 12px; border-radius:10px;
+  border:1px solid var(--border); background:#0f1626; color:var(--text); outline:none;
+}
+.inline-form input:focus{ border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft) }
+@media (max-width: 1100px){ .inline-form{ grid-template-columns: 1fr } }
+.inline-actions{ display:flex; gap:8px; margin-top:10px }
+
+/* Focus states */
+a:focus, button:focus, .item:focus, .search:focus, input:focus{
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  border-color: var(--accent);
+}
+
+/* Scrollbars */
+*{
+  scrollbar-width: thin;
+  scrollbar-color: #2b3756 transparent;
+}
+*::-webkit-scrollbar{ height:10px; width:10px }
+*::-webkit-scrollbar-thumb{
+  background: #2b3756; border-radius:999px; border: 2px solid transparent; background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover{ background:#34436b }
+*::-webkit-scrollbar-track{ background: transparent }
+
+/* Motion respect */
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}
+
+
+/* --- Viewport-Layout fix: keine Seiten-Scrolls --- */
+html, body { height: 100%; }
+
+body {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;               /* Seite selbst scrollt nicht */
+}
+
+/* Nimmt den verbleibenden Platz unter Header+Tabs ein */
+.panels {
+  flex: 1 1 auto;
+  height: auto;                    /* wichtig: nicht fix 100vh */
+  overflow: hidden;                /* internes Scrolling */
+}
+
+/* Panel füllt .panels vollständig */
+[role="tabpanel"] {
+  height: 100%;                    /* statt 100vh! */
+}
+
+
+
+
+.login-wrap { max-width: 380px; margin: 8vh auto; } .card { display:flex; flex-direction:column; gap:.75rem; } .row { display:flex; gap:.5rem; }
