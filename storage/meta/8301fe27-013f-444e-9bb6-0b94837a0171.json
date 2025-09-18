@@ -1,30 +1,30 @@
 {
-  "docId": "0067e73c-15f2-46ce-ac63-cc79cc2db5c5",
+  "docId": "8301fe27-013f-444e-9bb6-0b94837a0171",
   "state": "review",
-  "originalFilename": "36f1b8aa-cb80-4970-a8dd-a8453f43aa15.pdf",
-  "filePath": "storage/review/36f1b8aa-cb80-4970-a8dd-a8453f43aa15.pdf",
-  "createdAt": "2025-09-18T12:48:44.232Z",
+  "originalFilename": "7360b9ca-edd6-4342-b45b-ba35b2a75615.pdf",
+  "filePath": "storage/review/7360b9ca-edd6-4342-b45b-ba35b2a75615.pdf",
+  "createdAt": "2025-09-18T14:34:00.702Z",
   "createdBy": "system",
   "history": [
     {
-      "at": "2025-09-18T12:48:44.233Z",
+      "at": "2025-09-18T14:34:00.702Z",
       "by": "system",
       "event": "moved",
       "from": "scanner",
       "to": "inbox"
     },
     {
-      "at": "2025-09-18T12:48:54.272Z",
+      "at": "2025-09-18T14:34:06.167Z",
       "by": "system",
       "event": "classified"
     },
     {
-      "at": "2025-09-18T12:48:54.273Z",
+      "at": "2025-09-18T14:34:06.168Z",
       "action": "classify",
       "by": "admin"
     },
     {
-      "at": "2025-09-18T12:48:56.463Z",
+      "at": "2025-09-18T14:34:13.586Z",
       "by": "system",
       "event": "moved",
       "from": "inbox",
@@ -33,25 +33,25 @@
     }
   ],
   "classification": {
-    "fetchedAt": "2025-09-18T12:48:54.272Z",
+    "fetchedAt": "2025-09-18T14:34:06.167Z",
     "apiBase": "http://localhost:8080/api/v1",
-    "requestUuid": "36f1b8aa-cb80-4970-a8dd-a8453f43aa15",
+    "requestUuid": "7360b9ca-edd6-4342-b45b-ba35b2a75615",
     "result": {
-      "class_id": "586ccc70-53dd-4aaf-8528-63cc503217f1",
-      "custom_id": "36f1b8aa-cb80-4970-a8dd-a8453f43aa15",
+      "class_id": "f4d2ab1b-0fa3-4d2b-ac59-2b33e0a977b1",
+      "custom_id": "7360b9ca-edd6-4342-b45b-ba35b2a75615",
       "result": {
         "kind": "INVOICE",
         "doc_id": {
-          "value": "oAC\"2.",
+          "value": ";QC=N8",
           "score": 0.49
         },
         "doc_date_sic": {
-          "value": "20!5-07-1o",
+          "value": "_0+9dzD-11",
           "score": 0.4
         },
         "doc_date_parsed": "2025-01-11T00:00:00Z",
         "doc_subject": {
-          "value": "ehu EEnka7fR_i(jY\\[DX2k",
+          "value": "IhB {Xik-'f +Je/e4`sanz",
           "score": 0.4
         }
       }
@@ -62,7 +62,7 @@
     "threshold": 0.7,
     "aggregated_confidence": 0.4,
     "auto_processed": false,
-    "decided_at": "2025-09-18T12:48:56.463Z",
+    "decided_at": "2025-09-18T14:34:13.586Z",
     "decided_by": "system"
   }
 }

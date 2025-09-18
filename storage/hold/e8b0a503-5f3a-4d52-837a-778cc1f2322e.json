@@ -1,0 +1,75 @@
+{
+  "docId": "e8b0a503-5f3a-4d52-837a-778cc1f2322e",
+  "state": "hold",
+  "originalFilename": "9d8e60bf-7b25-48b4-99e4-d955264b1623.pdf",
+  "filePath": "storage/hold/9d8e60bf-7b25-48b4-99e4-d955264b1623.pdf",
+  "createdAt": "2025-09-18T14:07:16.352Z",
+  "createdBy": "system",
+  "history": [
+    {
+      "at": "2025-09-18T14:07:16.352Z",
+      "by": "system",
+      "event": "moved",
+      "from": "scanner",
+      "to": "inbox"
+    },
+    {
+      "at": "2025-09-18T14:07:19.038Z",
+      "by": "system",
+      "event": "classified"
+    },
+    {
+      "at": "2025-09-18T14:07:19.039Z",
+      "action": "classify",
+      "by": "admin"
+    },
+    {
+      "at": "2025-09-18T14:07:19.674Z",
+      "by": "system",
+      "event": "moved",
+      "from": "inbox",
+      "to": "review",
+      "note": "agg=0.69"
+    },
+    {
+      "at": "2025-09-18T14:07:37.513Z",
+      "by": "system",
+      "event": "moved",
+      "from": "review",
+      "to": "hold"
+    }
+  ],
+  "classification": {
+    "fetchedAt": "2025-09-18T14:07:19.038Z",
+    "apiBase": "http://localhost:8080/api/v1",
+    "requestUuid": "9d8e60bf-7b25-48b4-99e4-d955264b1623",
+    "result": {
+      "class_id": "d3695aed-e9af-42ca-b3b5-2bfb54a68b30",
+      "custom_id": "9d8e60bf-7b25-48b4-99e4-d955264b1623",
+      "result": {
+        "kind": "STATEMENT",
+        "doc_id": {
+          "value": "TE!2 5234 5O78 9123 87",
+          "score": 0.69
+        },
+        "doc_date_sic": {
+          "value": ";+25-fX-01",
+          "score": 0.9
+        },
+        "doc_date_parsed": "2025-01-01T00:00:00Z",
+        "doc_subject": {
+          "value": "-,ntoauszug }2-24",
+          "score": 0.7
+        }
+      }
+    }
+  },
+  "routing": {
+    "policy": "min",
+    "threshold": 0.7,
+    "aggregated_confidence": 0.69,
+    "auto_processed": false,
+    "decided_at": "2025-09-18T14:07:19.674Z",
+    "decided_by": "system"
+  }
+}

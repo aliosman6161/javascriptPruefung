@@ -1,0 +1,75 @@
+{
+  "docId": "0956ce76-ee76-4aa8-80ca-132a7cbf6e9a",
+  "state": "hold",
+  "originalFilename": "ff0a2c70-3533-4b7f-a499-74a1df39e419.pdf",
+  "filePath": "storage/hold/ff0a2c70-3533-4b7f-a499-74a1df39e419.pdf",
+  "createdAt": "2025-09-18T14:21:20.829Z",
+  "createdBy": "system",
+  "history": [
+    {
+      "at": "2025-09-18T14:21:20.829Z",
+      "by": "system",
+      "event": "moved",
+      "from": "scanner",
+      "to": "inbox"
+    },
+    {
+      "at": "2025-09-18T14:21:21.754Z",
+      "by": "system",
+      "event": "classified"
+    },
+    {
+      "at": "2025-09-18T14:21:21.756Z",
+      "action": "classify",
+      "by": "admin"
+    },
+    {
+      "at": "2025-09-18T14:21:23.655Z",
+      "by": "system",
+      "event": "moved",
+      "from": "inbox",
+      "to": "review",
+      "note": "agg=0.1"
+    },
+    {
+      "at": "2025-09-18T14:21:27.503Z",
+      "by": "system",
+      "event": "moved",
+      "from": "review",
+      "to": "hold"
+    }
+  ],
+  "classification": {
+    "fetchedAt": "2025-09-18T14:21:21.754Z",
+    "apiBase": "http://localhost:8080/api/v1",
+    "requestUuid": "ff0a2c70-3533-4b7f-a499-74a1df39e419",
+    "result": {
+      "class_id": "82ad8099-749a-4473-8879-702f253815f9",
+      "custom_id": "ff0a2c70-3533-4b7f-a499-74a1df39e419",
+      "result": {
+        "kind": "INVOICE",
+        "doc_id": {
+          "value": "NO5w,i",
+          "score": 0.19
+        },
+        "doc_date_sic": {
+          "value": "s,GEU^D2TK",
+          "score": 0.1
+        },
+        "doc_date_parsed": "2024-10-09T00:00:00Z",
+        "doc_subject": {
+          "value": "rOJp|obL7_S5 Bte`etXJGJ",
+          "score": 0.1
+        }
+      }
+    }
+  },
+  "routing": {
+    "policy": "min",
+    "threshold": 0.7,
+    "aggregated_confidence": 0.1,
+    "auto_processed": false,
+    "decided_at": "2025-09-18T14:21:23.655Z",
+    "decided_by": "system"
+  }
+}

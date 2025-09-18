@@ -19,6 +19,7 @@
   <nav class="tabs" role="tablist" aria-label="Ordner">
     <button class="tab" id="tab-inbox" role="tab" aria-selected="true" aria-controls="panel-inbox">Inbox</button>
     <button class="tab" id="tab-review" role="tab" aria-selected="false" aria-controls="panel-review">Review</button>
+    <button class="tab" id="tab-hold" role="tab" aria-selected="false" aria-controls="panel-hold">Hold</button>
     <button class="tab" id="tab-processed" role="tab" aria-selected="false" aria-controls="panel-processed">Processed</button>
   </nav>
 
@@ -64,6 +65,30 @@
         </section>
       </div>
     </section>
+
+
+    <!-- HOLD -->
+
+      <section id="panel-hold" role="tabpanel" hidden>
+        <div class="split">
+          <aside class="sidebar">
+            <div class="toolbar">
+              <button id="refresh-hold" class="icon-btn">Aktualisieren</button>
+            </div>
+            <div class="toolbar">
+              <input id="search-hold" class="search" placeholder="Suchen…" />
+            </div>
+            <div id="hold-list" class="list"></div>
+            <div id="hold-empty" class="empty" hidden>Keine Dokumente.</div>
+          </aside>
+          <section class="detail" id="hold-detail">
+            <div class="placeholder"><h2>Hold</h2><p>Wähle links ein Dokument.</p></div>
+          </section>
+        </div>
+      </section>
+
+
+
 
     <!-- PROCESSED -->
     <section id="panel-processed" role="tabpanel" hidden>

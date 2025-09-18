@@ -1,0 +1,24 @@
+{
+  "docId": "7e9f0808-14d2-4f1a-a5fa-07d7e9b7f713",
+  "state": "hold",
+  "originalFilename": "9ed68e99-4751-4218-9c6a-170ed7d00110.pdf",
+  "filePath": "storage/hold/9ed68e99-4751-4218-9c6a-170ed7d00110.pdf",
+  "createdAt": "2025-09-18T14:18:51.666Z",
+  "createdBy": "system",
+  "history": [
+    {
+      "at": "2025-09-18T14:18:51.666Z",
+      "by": "system",
+      "event": "moved",
+      "from": "scanner",
+      "to": "inbox"
+    },
+    {
+      "at": "2025-09-18T14:20:50.435Z",
+      "by": "system",
+      "event": "moved",
+      "from": "inbox",
+      "to": "hold"
+    }
+  ]
+}

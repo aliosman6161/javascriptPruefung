@@ -23,6 +23,7 @@ const META_DIR      = process.env.META_DIR      || path.resolve(__dirname, "../.
 const INBOX_DIR     = process.env.INBOX_DIR     || path.resolve(__dirname, "../../storage/inbox");
 const PROCESSED_DIR = process.env.PROCESSED_DIR || path.resolve(__dirname, "../../storage/processed");
 const REVIEW_DIR    = process.env.REVIEW_DIR    || path.resolve(__dirname, "../../storage/review");
+const HOLD_DIR      = process.env.HOLD_DIR      || path.resolve(__dirname, "../../storage/hold");
 
 const PORT          = Number(process.env.PORT || 3001);
 const USER_NAME     = process.env.USER_NAME || "system";
@@ -408,16 +409,20 @@ export function startServer() {
         if (!body || !body.to) return sendJson(res, 400, { error: "bad_request", message: "body.to required" });
 
         const to = String(body.to).toLowerCase();
-        if (!["processed","review"].includes(to)) {
-          return sendJson(res, 400, { error: "bad_request", message: "to must be 'processed' or 'review'" });
+        if (!["processed","review","hold","inbox"].includes(to)) {
+          return sendJson(res, 400, { error: "bad_request", message: "to must be 'processed', 'review', 'hold' or 'inbox'" });
         }
+
 
         const relPdf = meta.filePath;
         if (!relPdf) return sendJson(res, 409, { error: "file_missing", message: "filePath not set in meta" });
         const absPdf = path.resolve(ROOT_DIR, relPdf);
         if (!fs.existsSync(absPdf)) return sendJson(res, 409, { error: "file_missing", message: `PDF not found: ${relPdf}` });
 
-        const dstDir = to === "processed" ? PROCESSED_DIR : REVIEW_DIR;
+        const dstDir = to === "processed" ? PROCESSED_DIR
+              : to === "review"   ? REVIEW_DIR
+              : to === "hold"     ? HOLD_DIR
+              :                      INBOX_DIR; // fallback: inbox
         const movedAbs = await moveFile(absPdf, dstDir);
         const newRel  = relFromRoot(movedAbs);
 

@@ -1,0 +1,89 @@
+{
+  "docId": "f92a7e9b-de44-4dc6-8c74-a22a0da39265",
+  "state": "hold",
+  "originalFilename": "ac09d4d2-a86f-49e1-aa02-7ed2f146b125.pdf",
+  "filePath": "storage/hold/ac09d4d2-a86f-49e1-aa02-7ed2f146b125.pdf",
+  "createdAt": "2025-09-18T14:18:21.580Z",
+  "createdBy": "system",
+  "history": [
+    {
+      "at": "2025-09-18T14:18:21.580Z",
+      "by": "system",
+      "event": "moved",
+      "from": "scanner",
+      "to": "inbox"
+    },
+    {
+      "at": "2025-09-18T14:18:24.546Z",
+      "by": "system",
+      "event": "moved",
+      "from": "inbox",
+      "to": "hold"
+    },
+    {
+      "at": "2025-09-18T14:18:27.328Z",
+      "by": "system",
+      "event": "moved",
+      "from": "hold",
+      "to": "inbox"
+    },
+    {
+      "at": "2025-09-18T14:18:30.128Z",
+      "by": "system",
+      "event": "classified"
+    },
+    {
+      "at": "2025-09-18T14:18:30.129Z",
+      "action": "classify",
+      "by": "admin"
+    },
+    {
+      "at": "2025-09-18T14:18:33.970Z",
+      "by": "system",
+      "event": "moved",
+      "from": "inbox",
+      "to": "review",
+      "note": "agg=0.49"
+    },
+    {
+      "at": "2025-09-18T14:18:40.249Z",
+      "by": "system",
+      "event": "moved",
+      "from": "review",
+      "to": "hold"
+    }
+  ],
+  "classification": {
+    "fetchedAt": "2025-09-18T14:18:30.128Z",
+    "apiBase": "http://localhost:8080/api/v1",
+    "requestUuid": "ac09d4d2-a86f-49e1-aa02-7ed2f146b125",
+    "result": {
+      "class_id": "b10e69e6-39fe-4a25-87ed-14474f6a1d17",
+      "custom_id": "ac09d4d2-a86f-49e1-aa02-7ed2f146b125",
+      "result": {
+        "kind": "STATEMENT",
+        "doc_id": {
+          "value": "DU92 {oV4 j?(C~|P02^N7",
+          "score": 0.49
+        },
+        "doc_date_sic": {
+          "value": "\"024:11-01",
+          "score": 0.9
+        },
+        "doc_date_parsed": "2024-11-01T00:00:00Z",
+        "doc_subject": {
+          "value": "Kon$o5u$Y`- 1C-<G",
+          "score": 0.7
+        }
+      }
+    }
+  },
+  "routing": {
+    "policy": "min",
+    "threshold": 0.7,
+    "aggregated_confidence": 0.49,
+    "auto_processed": false,
+    "decided_at": "2025-09-18T14:18:33.970Z",
+    "decided_by": "system"
+  }
+}

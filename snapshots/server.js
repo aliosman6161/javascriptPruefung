@@ -23,6 +23,7 @@ const META_DIR      = process.env.META_DIR      || path.resolve(__dirname, "../.
 const INBOX_DIR     = process.env.INBOX_DIR     || path.resolve(__dirname, "../../storage/inbox");
 const PROCESSED_DIR = process.env.PROCESSED_DIR || path.resolve(__dirname, "../../storage/processed");
 const REVIEW_DIR    = process.env.REVIEW_DIR    || path.resolve(__dirname, "../../storage/review");
+const HOLD_DIR      = process.env.HOLD_DIR      || path.resolve(__dirname, "../../storage/hold");
 
 const PORT          = Number(process.env.PORT || 3001);
 const USER_NAME     = process.env.USER_NAME || "system";
@@ -43,13 +44,20 @@ const CLASSIFIER_API_BASE = (process.env.CLASSIFIER_API_BASE || "http://localhos
 // a) User aus Request ableiten (Body bevorzugt, sonst Fallback)
 function resolveUser(req) {
   try {
-    // JSON-Body: { user: "admin", ... } – Frontend kann das später mitschicken
+    // 1) Body-Feld 'user' (falls vorhanden)
     if (req?.body && typeof req.body.user === "string" && req.body.user.trim()) {
       return req.body.user.trim();
     }
   } catch {}
+
+  // 2) Header 'X-User' (global vom Frontend gesetzt)
+  const h = req.headers?.["x-user"];
+  if (typeof h === "string" && h.trim()) return h.trim();
+
+  // 3) Fallback
   return "anonymous";
 }
+
 
 // b) min-Aggregat aus Klassifizierungs-Scores bestimmen (wie im Frontend)
 function getMinConfidence(meta) {
@@ -295,7 +303,7 @@ export function startServer() {
       // CORS
       res.setHeader("Access-Control-Allow-Origin", "*");
       res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,OPTIONS");
-      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+      res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-User");
       if (method === "OPTIONS") { res.writeHead(204); return res.end(); }
 
       // Health
@@ -401,16 +409,20 @@ export function startServer() {
         if (!body || !body.to) return sendJson(res, 400, { error: "bad_request", message: "body.to required" });
 
         const to = String(body.to).toLowerCase();
-        if (!["processed","review"].includes(to)) {
-          return sendJson(res, 400, { error: "bad_request", message: "to must be 'processed' or 'review'" });
+        if (!["processed","review","hold","inbox"].includes(to)) {
+          return sendJson(res, 400, { error: "bad_request", message: "to must be 'processed', 'review', 'hold' or 'inbox'" });
         }
+
 
         const relPdf = meta.filePath;
         if (!relPdf) return sendJson(res, 409, { error: "file_missing", message: "filePath not set in meta" });
         const absPdf = path.resolve(ROOT_DIR, relPdf);
         if (!fs.existsSync(absPdf)) return sendJson(res, 409, { error: "file_missing", message: `PDF not found: ${relPdf}` });
 
-        const dstDir = to === "processed" ? PROCESSED_DIR : REVIEW_DIR;
+        const dstDir = to === "processed" ? PROCESSED_DIR
+              : to === "review"   ? REVIEW_DIR
+              : to === "hold"     ? HOLD_DIR
+              :                      INBOX_DIR; // fallback: inbox
         const movedAbs = await moveFile(absPdf, dstDir);
         const newRel  = relFromRoot(movedAbs);
 

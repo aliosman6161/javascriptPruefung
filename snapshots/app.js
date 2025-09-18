@@ -4,6 +4,21 @@
 (function () {
   const API_BASE = "http://localhost:3001";
 
+
+
+
+  // --- Globaler Fetch-Wrapper: hängt X-User an ---
+  const __origFetch = window.fetch;
+  window.fetch = (input, init = {}) => {
+    const headers = new Headers(init?.headers || {});
+    const u = localStorage.getItem("ip_user") || "anonymous";
+    headers.set("X-User", u);
+    return __origFetch(input, { ...init, headers });
+  };
+
+
+
+
   // --- Simple "Login required" ---
   const CURRENT_USER = localStorage.getItem("ip_user");
   if (!CURRENT_USER) {
@@ -25,7 +40,8 @@
 
   const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
   const panels = Array.from(document.querySelectorAll('[role="tabpanel"]'));
-  const states = ["inbox","review","processed"];
+  const states = ["inbox","review","hold","processed"];
+
 
   const ui = {
     inbox: {
@@ -42,18 +58,24 @@
     review: {
       list: qs("#review-list"), empty: qs("#review-empty"), detail: qs("#review-detail"), refresh: qs("#refresh-review"), search: qs("#search-review")
     },
+    hold: {
+      list: qs("#hold-list"), empty: qs("#hold-empty"), detail: qs("#hold-detail"), refresh: qs("#refresh-hold"), search: qs("#search-hold")
+    },
     processed:{
       list: qs("#processed-list"), empty: qs("#processed-empty"), detail: qs("#processed-detail"), refresh: qs("#refresh-processed"), search: qs("#search-processed")
     }
   };
 
+
   // In-Memory Cache
   const cache = {
     inbox:    { items: [], loaded: false },
     review:   { items: [], loaded: false },
+    hold:     { items: [], loaded: false },
     processed:{ items: [], loaded: false },
   };
-  const selected = { inbox: null, review: null, processed: null };
+  const selected = { inbox: null, review: null, hold: null, processed: null };
+
 
   // --- helpers ---
   function qs(sel, el=document){ return el.querySelector(sel); }
@@ -230,18 +252,25 @@
           rightButtons = `
             ${classifyBtn}
             <button id="btn-to-review" class="icon-btn small">→ Review</button>
+            <button id="btn-to-hold" class="icon-btn small">→ Hold</button>
             <button id="btn-to-processed" class="icon-btn small primary">→ Processed</button>
             ${autoRouteBtn}
             ${editBtn}
           `;
         } else if (meta.state === "review") {
           rightButtons = `
+            <button id="btn-to-hold" class="icon-btn small">→ Hold</button>
             <button id="btn-to-processed" class="icon-btn small primary">→ Processed</button>
             ${editBtn}
+          `;
+        } else if (meta.state === "hold") {
+          rightButtons = `
+            <button id="btn-back-inbox" class="icon-btn small">← Zurück in Review</button>
           `;
         } else {
           rightButtons = ``; // processed
         }
+
 
         detail.innerHTML = `
           <div class="detail-grid">
@@ -294,6 +323,7 @@
           }
         });
 
+
         // Inbox/Review → Processed
         qs("#btn-to-processed", detail)?.addEventListener("click", async () => {
           try{
@@ -338,6 +368,48 @@
             disableActionButtons(false);
           }
         });
+
+
+
+
+        // Inbox/Review → Hold
+        qs("#btn-to-hold", detail)?.addEventListener("click", async () => {
+          try{
+            disableActionButtons(true);
+            const from = meta.state || "inbox";
+            const updated = await routeTo(docId, "hold");
+            updateCachesAfterRoute(updated, from, "hold");
+            activateTab("hold");
+            await loadState("hold", updated.docId, { force:true });
+            toast("Verschoben nach Hold.", "success");
+          } catch(e){
+            toast("Verschieben nach Hold fehlgeschlagen: " + String(e?.message || e), "error", { timeout: 3500 });
+          } finally {
+            disableActionButtons(false);
+          }
+        });
+
+        // Hold → Inbox (Release)
+        qs("#btn-back-inbox", detail)?.addEventListener("click", async () => {
+          try{
+            disableActionButtons(true);
+            const updated = await routeTo(docId, "review");
+            updateCachesAfterRoute(updated, "hold", "review");
+            activateTab("review");
+            await loadState("review", updated.docId, { force:true });
+            toast("Zurück in die review verschoben.", "success");
+          } catch(e){
+            toast("Zurückschieben in review fehlgeschlagen: " + String(e?.message || e), "error", { timeout: 3500 });
+          } finally {
+            disableActionButtons(false);
+          }
+        });
+
+
+
+
+
+
       };
 
       const renderEdit = () => {
