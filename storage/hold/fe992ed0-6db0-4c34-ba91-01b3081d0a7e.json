@@ -1,0 +1,84 @@
+{
+  "docId": "fe992ed0-6db0-4c34-ba91-01b3081d0a7e",
+  "state": "hold",
+  "originalFilename": "61cf5158-2209-4fcd-afb9-8d673d454223.pdf",
+  "filePath": "storage/hold/61cf5158-2209-4fcd-afb9-8d673d454223.pdf",
+  "createdAt": "2025-09-18T15:07:40.785Z",
+  "createdBy": "system",
+  "history": [
+    {
+      "at": "2025-09-18T15:07:40.785Z",
+      "by": "system",
+      "event": "moved",
+      "from": "scanner",
+      "to": "inbox"
+    },
+    {
+      "at": "2025-09-18T15:22:38.573Z",
+      "by": "system",
+      "event": "classified"
+    },
+    {
+      "at": "2025-09-18T15:22:38.575Z",
+      "action": "classify",
+      "by": "admin"
+    },
+    {
+      "at": "2025-09-18T15:22:46.394Z",
+      "by": "system",
+      "event": "corrections_saved"
+    },
+    {
+      "at": "2025-09-18T15:22:46.395Z",
+      "action": "corrections",
+      "by": "admin"
+    },
+    {
+      "at": "2025-09-18T15:23:06.666Z",
+      "by": "system",
+      "event": "corrections_saved"
+    },
+    {
+      "at": "2025-09-18T15:23:06.667Z",
+      "action": "corrections",
+      "by": "admin"
+    },
+    {
+      "at": "2025-09-18T15:23:12.299Z",
+      "by": "system",
+      "event": "moved",
+      "from": "inbox",
+      "to": "hold"
+    }
+  ],
+  "classification": {
+    "fetchedAt": "2025-09-18T15:22:38.573Z",
+    "apiBase": "http://localhost:8080/api/v1",
+    "requestUuid": "61cf5158-2209-4fcd-afb9-8d673d454223",
+    "result": {
+      "class_id": "02829fcb-1b2f-46d0-a299-f3e2fcbcff9c",
+      "custom_id": "61cf5158-2209-4fcd-afb9-8d673d454223",
+      "result": {
+        "kind": "STATEMENT",
+        "doc_id": {
+          "value": "D|92g123f(5h7d!P[23y87",
+          "score": 0.69
+        },
+        "doc_date_sic": {
+          "value": "2025-01-0I",
+          "score": 0.9
+        },
+        "doc_date_parsed": "2025-01-01T00:00:00Z",
+        "doc_subject": {
+          "value": "hontoauswug 12-2K",
+          "score": 0.7
+        }
+      }
+    }
+  },
+  "corrections": {
+    "kind": "STATEMENTgfg"
+  },
+  "correctedAt": "2025-09-18T15:23:06.666Z",
+  "correctedBy": "system"
+}

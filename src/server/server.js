@@ -60,16 +60,24 @@ function resolveUser(req) {
 
 
 // b) min-Aggregat aus Klassifizierungs-Scores bestimmen (wie im Frontend)
-function getMinConfidence(meta) {
-  const r = meta?.classification?.result?.result || meta?.classification?.result || null;
-  if (!r) return null;
-  const scores = [];
-  if (r?.doc_id?.score != null)        scores.push(Number(r.doc_id.score));
-  if (r?.doc_date_sic?.score != null)  scores.push(Number(r.doc_date_sic.score));
-  if (r?.doc_subject?.score != null)   scores.push(Number(r.doc_subject.score));
-  if (!scores.length) return null;
-  return scores.reduce((m, v) => Math.min(m, v), 1);
-}
+  function getMinConfidence(meta) {
+    const r = meta?.classification?.result?.result || meta?.classification?.result || null;
+    if (!r) return null;
+
+    const o = meta?.corrections?.conf_overrides || {};
+    const sId   = (typeof o.doc_id_score === "number")       ? o.doc_id_score       : r?.doc_id?.score;
+    const sDate = (typeof o.doc_date_sic_score === "number") ? o.doc_date_sic_score : r?.doc_date_sic?.score;
+    const sSubj = (typeof o.doc_subject_score === "number")  ? o.doc_subject_score  : r?.doc_subject?.score;
+
+    const scores = [];
+    if (typeof sId   === "number") scores.push(Number(sId));
+    if (typeof sDate === "number") scores.push(Number(sDate));
+    if (typeof sSubj === "number") scores.push(Number(sSubj));
+
+    if (!scores.length) return null;
+    return scores.reduce((m, v) => Math.min(m, v), 1);
+  }
+
 
 // c) classification_mode für Processed setzen
 function computeClassificationMode(meta, { isAutoRoute = false, threshold = 0.7 } = {}) {
@@ -256,9 +264,9 @@ async function classifyOne(meta) {
 
 async function autoRouteOne(meta, threshold = 0.7) {
   if (!meta.classification) throw new Error("not_classified");
-  const inner = getInnerResult(meta.classification);
-  const min = minConfidenceFromInner(inner);
+  const min = getMinConfidence(meta); // nutzt KI-Scores ODER Overrides
   if (min == null) throw new Error("no_scores");
+
 
   const fromState = meta.state;
   const target = min >= threshold ? "processed" : "review";
@@ -368,6 +376,11 @@ export function startServer() {
         const body = await readJsonBody(req).catch(() => null);
         if (!body) return sendJson(res, 400, { error: "invalid_json_body" });
 
+
+        
+
+
+
         const allowed = ["kind", "doc_id", "doc_date_sic", "doc_date_parsed", "doc_subject"];
         const patch = {};
         for (const k of allowed) {
@@ -376,6 +389,35 @@ export function startServer() {
         meta.corrections = { ...(meta.corrections || {}), ...patch };
         meta.correctedAt = new Date().toISOString();
         meta.correctedBy = USER_NAME;
+
+        // ⬇️ NEU: Confidence-Overrides (0..1; "" = löschen)
+        if (body && typeof body.conf_overrides === "object") {
+          const co = body.conf_overrides || {};
+          const keys = ["doc_id_score","doc_date_sic_score","doc_subject_score"];
+
+          // Zielstruktur sicherstellen
+          const target = { ...(meta.corrections.conf_overrides || {}) };
+
+          for (const k of keys) {
+            const v = co[k];
+            if (v === "" || v === null || typeof v === "undefined") {
+              delete target[k];                 // leeres Feld => Override entfernen
+            } else {
+              const n = Number(v);
+              if (isFinite(n) && n >= 0 && n <= 1) target[k] = n; // clampen macht schon das Frontend
+            }
+          }
+          if (Object.keys(target).length === 0) {
+            if (meta.corrections.conf_overrides) delete meta.corrections.conf_overrides;
+          } else {
+            meta.corrections.conf_overrides = target;
+          }
+        }
+
+
+
+
+
 
         meta.history = Array.isArray(meta.history) ? meta.history : [];
         meta.history.push({ at: new Date().toISOString(), by: USER_NAME, event: "corrections_saved" });

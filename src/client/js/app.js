@@ -469,9 +469,9 @@
 
                 <div class="subsection" style="margin-top:16px;">
                   <h3 class="section-title">Confidence Overrides (0–1)</h3>
-                  ${renderNumber("conf_doc_id", "doc_id.score", overrides?.doc_id_score)}
-                  ${renderNumber("conf_date_sic", "doc_date_sic.score", overrides?.doc_date_sic_score)}
-                  ${renderNumber("conf_subject", "doc_subject.score", overrides?.doc_subject_score)}
+                  ${renderNumber("conf_doc_id", "doc_id.score", (overrides?.doc_id_score ?? fieldScores.doc_id ?? ""))}
+                  ${renderNumber("conf_date_sic", "doc_date_sic.score", (overrides?.doc_date_sic_score ?? fieldScores.doc_date_sic ?? ""))}
+                  ${renderNumber("conf_subject", "doc_subject.score", (overrides?.doc_subject_score ?? fieldScores.doc_subject ?? ""))}
                   <p class="hint muted">Leer lassen, um keinen Override zu setzen.</p>
                 </div>
 
@@ -506,23 +506,23 @@
               }
             }
 
-            // Confidence-Overrides einsammeln (leer => kein Override)
-            const getNum = (sel) => {
+            
+            // Confidence-Overrides einsammeln
+            const getNumOrEmpty = (sel) => {
               const s = val(sel, detail);
-              if (s === "") return null;
+              if (s === "") return "";             // "" = Override löschen
               const n = Number(s);
-              if (!isFinite(n)) return null;
-              return Math.max(0, Math.min(1, n));
+              if (!isFinite(n)) return "";         // ungültig => wie leer behandeln
+              return Math.max(0, Math.min(1, n));  // clamp 0..1
             };
             const conf = {
-              doc_id_score: getNum("#f-conf_doc_id"),
-              doc_date_sic_score: getNum("#f-conf_date_sic"),
-              doc_subject_score: getNum("#f-conf_subject"),
+              doc_id_score:      getNumOrEmpty("#f-conf_doc_id"),
+              doc_date_sic_score:getNumOrEmpty("#f-conf_date_sic"),
+              doc_subject_score: getNumOrEmpty("#f-conf_subject"),
             };
-            // nur anhängen, wenn eines gesetzt/geleert wurde
-            if (conf.doc_id_score !== null || conf.doc_date_sic_score !== null || conf.doc_subject_score !== null) {
-              patch.conf_overrides = conf;
-            }
+            // immer mitsenden (Server kann dann setzen/entfernen)
+            patch.conf_overrides = conf;
+
 
 
 
